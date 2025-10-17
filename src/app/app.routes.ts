@@ -19,6 +19,24 @@ import { SignInComponent } from './pages/auth-pages/sign-in/sign-in.component';
 import { SignUpComponent } from './pages/auth-pages/sign-up/sign-up.component';
 import { CalenderComponent } from './pages/calender/calender.component';
 
+// To add new routes to the dashboard, follow these instructions.
+// 1. Create a folder for the property of pages in the src --> app --> pages
+// 2. Create folders for individual pages in that same folder.
+// 3. Create two files. Use the same names and two files with both (.html, .ts) 
+// 4. Create the component in the .ts file using the "export class (class name)" and import here. Recommended to comment here
+
+// For the machines
+import { NewMachineComponent } from './pages/machine_dashboard/new_machine/new_machine.component';
+import { MachineContentComponent } from './pages/machine_dashboard/machine_contents/machine_content.component';
+import { RegisteredMachineComponent } from './pages/machine_dashboard/registered_machine/registered_machine.component';
+
+
+// Routes for the pages
+// 1. Add the routes in the "routes" below
+// 2. In "path", enter the sub URL name
+// 3. In "component", enter the component name imported
+// 4. "pathMatch" can be empty
+// 5. In "title", enter a suitable title
 export const routes: Routes = [
   {
     path:'',
@@ -29,12 +47,27 @@ export const routes: Routes = [
         component: EcommerceComponent,
         pathMatch: 'full',
         title:
-          'Angular Ecommerce Dashboard | TailAdmin - Angular Admin Dashboard Template',
+          'Extea Dashboard | Home',
       },
       {
         path:'calendar',
         component:CalenderComponent,
         title:'Angular Calender | TailAdmin - Angular Admin Dashboard Template'
+      },
+      {
+        path:'new_machine',
+        component:NewMachineComponent,
+        title:'Extea Dashboard | Create new machine'
+      },
+      {
+        path:'machine_content',
+        component:MachineContentComponent,
+        title:'Extea Dashboard | Machine content'
+      },
+      {
+        path:'registered_machine',
+        component:RegisteredMachineComponent,
+        title:'Extea Dashboard | Registered machine'
       },
       {
         path:'profile',
