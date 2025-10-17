@@ -8,6 +8,7 @@ type BadgeColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'light'
 
 @Component({
   selector: 'app-badge',
+  standalone: true,
   imports: [CommonModule,SafeHtmlPipe],
   templateUrl: './badge.component.html',
 })

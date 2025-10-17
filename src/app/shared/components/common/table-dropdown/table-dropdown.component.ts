@@ -11,6 +11,7 @@ import { createPopper, Instance } from '@popperjs/core';
 
 @Component({
   selector: 'app-table-dropdown',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './table-dropdown.component.html',
   styles: ``

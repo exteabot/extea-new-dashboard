@@ -9,6 +9,7 @@ interface BreadcrumbItem {
 
 @Component({
   selector: 'app-page-breadcrumb',
+  standalone: true,
   imports: [
     CommonModule,
     RouterModule,

@@ -8,6 +8,7 @@ export interface Option {
 
 @Component({
   selector: 'app-select',
+  standalone: true,
   imports:[CommonModule],
   templateUrl: './select.component.html',
 })
