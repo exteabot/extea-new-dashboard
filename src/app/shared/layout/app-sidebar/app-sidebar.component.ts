@@ -1,11 +1,17 @@
 // This is where the sidebar components are
-import { CommonModule } from '@angular/common';
-import { Component, ElementRef, QueryList, ViewChildren, ChangeDetectorRef } from '@angular/core';
-import { SidebarService } from '../../services/sidebar.service';
-import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { SafeHtmlPipe } from '../../pipe/safe-html.pipe';
+import { CommonModule } from "@angular/common";
+import {
+  Component,
+  ElementRef,
+  QueryList,
+  ViewChildren,
+  ChangeDetectorRef,
+} from "@angular/core";
+import { SidebarService } from "../../services/sidebar.service";
+import { NavigationEnd, Router, RouterModule } from "@angular/router";
+import { SafeHtmlPipe } from "../../pipe/safe-html.pipe";
 // import { SidebarWidgetComponent } from './app-sidebar-widget.component';
-import { combineLatest, Subscription } from 'rxjs';
+import { combineLatest, Subscription } from "rxjs";
 
 type NavItem = {
   name: string;
@@ -16,25 +22,22 @@ type NavItem = {
 };
 
 @Component({
-  selector: 'app-sidebar',
+  selector: "app-sidebar",
   imports: [
     CommonModule,
     RouterModule,
     SafeHtmlPipe,
     // SidebarWidgetComponent
   ],
-  templateUrl: './app-sidebar.component.html',
+  templateUrl: "./app-sidebar.component.html",
 })
 export class AppSidebarComponent {
-
   // Main nav items
   navItems: NavItem[] = [
     {
       icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.5 3.25C4.25736 3.25 3.25 4.25736 3.25 5.5V8.99998C3.25 10.2426 4.25736 11.25 5.5 11.25H9C10.2426 11.25 11.25 10.2426 11.25 8.99998V5.5C11.25 4.25736 10.2426 3.25 9 3.25H5.5ZM4.75 5.5C4.75 5.08579 5.08579 4.75 5.5 4.75H9C9.41421 4.75 9.75 5.08579 9.75 5.5V8.99998C9.75 9.41419 9.41421 9.74998 9 9.74998H5.5C5.08579 9.74998 4.75 9.41419 4.75 8.99998V5.5ZM5.5 12.75C4.25736 12.75 3.25 13.7574 3.25 15V18.5C3.25 19.7426 4.25736 20.75 5.5 20.75H9C10.2426 20.75 11.25 19.7427 11.25 18.5V15C11.25 13.7574 10.2426 12.75 9 12.75H5.5ZM4.75 15C4.75 14.5858 5.08579 14.25 5.5 14.25H9C9.41421 14.25 9.75 14.5858 9.75 15V18.5C9.75 18.9142 9.41421 19.25 9 19.25H5.5C5.08579 19.25 4.75 18.9142 4.75 18.5V15ZM12.75 5.5C12.75 4.25736 13.7574 3.25 15 3.25H18.5C19.7426 3.25 20.75 4.25736 20.75 5.5V8.99998C20.75 10.2426 19.7426 11.25 18.5 11.25H15C13.7574 11.25 12.75 10.2426 12.75 8.99998V5.5ZM15 4.75C14.5858 4.75 14.25 5.08579 14.25 5.5V8.99998C14.25 9.41419 14.5858 9.74998 15 9.74998H18.5C18.9142 9.74998 19.25 9.41419 19.25 8.99998V5.5C19.25 5.08579 18.9142 4.75 18.5 4.75H15ZM15 12.75C13.7574 12.75 12.75 13.7574 12.75 15V18.5C12.75 19.7426 13.7574 20.75 15 20.75H18.5C19.7426 20.75 20.75 19.7427 20.75 18.5V15C20.75 13.7574 19.7426 12.75 18.5 12.75H15ZM14.25 15C14.25 14.5858 14.5858 14.25 15 14.25H18.5C18.9142 14.25 19.25 14.5858 19.25 15V18.5C19.25 18.9142 18.9142 19.25 18.5 19.25H15C14.5858 19.25 14.25 18.9142 14.25 18.5V15Z" fill="currentColor"></path></svg>`,
       name: "Dashboard",
-      subItems: [
-        { name: "Ecommerce", path: "/" },
-      ],
+      subItems: [{ name: "Ecommerce", path: "/" }],
     },
     // Add the sidebar items here.
     // 1. Place the 'icon' here in .svg format
@@ -48,10 +51,17 @@ export class AppSidebarComponent {
 </svg>`,
       name: "Machines",
       subItems: [
-        {name: "New Machine", path: "/new_machine"},
-        {name: "Registered Machines", path: "/registered_machine"},
-        {name: "Machine Contents", path: "/machine_content"},
-      ]
+        { name: "New Machine", path: "/new_machine" },
+        { name: "Registered Machines", path: "/registered_machine" },
+        { name: "Machine Contents", path: "/machine_content" },
+      ],
+    },
+    {
+      icon: `<svg fill="#000000" width="800px" height="800px" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M8 2L8 6L4 6L4 48L46 48L46 14L30 14L30 6L26 6L26 2 Z M 10 4L24 4L24 8L28 8L28 46L19 46L19 39L15 39L15 46L6 46L6 8L10 8 Z M 10 10L10 12L12 12L12 10 Z M 14 10L14 12L16 12L16 10 Z M 18 10L18 12L20 12L20 10 Z M 22 10L22 12L24 12L24 10 Z M 10 15L10 19L12 19L12 15 Z M 14 15L14 19L16 19L16 15 Z M 18 15L18 19L20 19L20 15 Z M 22 15L22 19L24 19L24 15 Z M 30 16L44 16L44 46L30 46 Z M 32 18L32 20L34 20L34 18 Z M 36 18L36 20L38 20L38 18 Z M 40 18L40 20L42 20L42 18 Z M 10 21L10 25L12 25L12 21 Z M 14 21L14 25L16 25L16 21 Z M 18 21L18 25L20 25L20 21 Z M 22 21L22 25L24 25L24 21 Z M 32 22L32 24L34 24L34 22 Z M 36 22L36 24L38 24L38 22 Z M 40 22L40 24L42 24L42 22 Z M 32 26L32 28L34 28L34 26 Z M 36 26L36 28L38 28L38 26 Z M 40 26L40 28L42 28L42 26 Z M 10 27L10 31L12 31L12 27 Z M 14 27L14 31L16 31L16 27 Z M 18 27L18 31L20 31L20 27 Z M 22 27L22 31L24 31L24 27 Z M 32 30L32 32L34 32L34 30 Z M 36 30L36 32L38 32L38 30 Z M 40 30L40 32L42 32L42 30 Z M 10 33L10 37L12 37L12 33 Z M 14 33L14 37L16 37L16 33 Z M 18 33L18 37L20 37L20 33 Z M 22 33L22 37L24 37L24 33 Z M 32 34L32 36L34 36L34 34 Z M 36 34L36 36L38 36L38 34 Z M 40 34L40 36L42 36L42 34 Z M 32 38L32 40L34 40L34 38 Z M 36 38L36 40L38 40L38 38 Z M 40 38L40 40L42 40L42 38 Z M 10 39L10 44L12 44L12 39 Z M 22 39L22 44L24 44L24 39 Z M 32 42L32 44L34 44L34 42 Z M 36 42L36 44L38 44L38 42 Z M 40 42L40 44L42 44L42 42Z"/></svg>`,
+      name: "Partner Companies",
+      subItems: [
+        { name: "New Company", path: "/new_company" }
+      ],
     },
     {
       icon: `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 2C8.41421 2 8.75 2.33579 8.75 2.75V3.75H15.25V2.75C15.25 2.33579 15.5858 2 16 2C16.4142 2 16.75 2.33579 16.75 2.75V3.75H18.5C19.7426 3.75 20.75 4.75736 20.75 6V9V19C20.75 20.2426 19.7426 21.25 18.5 21.25H5.5C4.25736 21.25 3.25 20.2426 3.25 19V9V6C3.25 4.75736 4.25736 3.75 5.5 3.75H7.25V2.75C7.25 2.33579 7.58579 2 8 2ZM8 5.25H5.5C5.08579 5.25 4.75 5.58579 4.75 6V8.25H19.25V6C19.25 5.58579 18.9142 5.25 18.5 5.25H16H8ZM19.25 9.75H4.75V19C4.75 19.4142 5.08579 19.75 5.5 19.75H18.5C18.9142 19.75 19.25 19.4142 19.25 19V9.75Z" fill="currentColor"></path></svg>`,
@@ -66,16 +76,12 @@ export class AppSidebarComponent {
     {
       name: "Forms",
       icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.5 3.25C4.25736 3.25 3.25 4.25736 3.25 5.5V18.5C3.25 19.7426 4.25736 20.75 5.5 20.75H18.5001C19.7427 20.75 20.7501 19.7426 20.7501 18.5V5.5C20.7501 4.25736 19.7427 3.25 18.5001 3.25H5.5ZM4.75 5.5C4.75 5.08579 5.08579 4.75 5.5 4.75H18.5001C18.9143 4.75 19.2501 5.08579 19.2501 5.5V18.5C19.2501 18.9142 18.9143 19.25 18.5001 19.25H5.5C5.08579 19.25 4.75 18.9142 4.75 18.5V5.5ZM6.25005 9.7143C6.25005 9.30008 6.58583 8.9643 7.00005 8.9643L17 8.96429C17.4143 8.96429 17.75 9.30008 17.75 9.71429C17.75 10.1285 17.4143 10.4643 17 10.4643L7.00005 10.4643C6.58583 10.4643 6.25005 10.1285 6.25005 9.7143ZM6.25005 14.2857C6.25005 13.8715 6.58583 13.5357 7.00005 13.5357H17C17.4143 13.5357 17.75 13.8715 17.75 14.2857C17.75 14.6999 17.4143 15.0357 17 15.0357H7.00005C6.58583 15.0357 6.25005 14.6999 6.25005 14.2857Z" fill="currentColor"></path></svg>`,
-      subItems: [
-        { name: "Form Elements", path: "/form-elements", pro: false }
-      ],
+      subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
     },
     {
       name: "Tables",
       icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.25 5.5C3.25 4.25736 4.25736 3.25 5.5 3.25H18.5C19.7426 3.25 20.75 4.25736 20.75 5.5V18.5C20.75 19.7426 19.7426 20.75 18.5 20.75H5.5C4.25736 20.75 3.25 19.7426 3.25 18.5V5.5ZM5.5 4.75C5.08579 4.75 4.75 5.08579 4.75 5.5V8.58325L19.25 8.58325V5.5C19.25 5.08579 18.9142 4.75 18.5 4.75H5.5ZM19.25 10.0833H15.416V13.9165H19.25V10.0833ZM13.916 10.0833L10.083 10.0833V13.9165L13.916 13.9165V10.0833ZM8.58301 10.0833H4.75V13.9165H8.58301V10.0833ZM4.75 18.5V15.4165H8.58301V19.25H5.5C5.08579 19.25 4.75 18.9142 4.75 18.5ZM10.083 19.25V15.4165L13.916 15.4165V19.25H10.083ZM15.416 19.25V15.4165H19.25V18.5C19.25 18.9142 18.9142 19.25 18.5 19.25H15.416Z" fill="currentColor"></path></svg>`,
-      subItems: [
-        { name: "Basic Tables", path: "/basic-tables", pro: false },
-      ],
+      subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
     },
     {
       name: "Pages",
@@ -120,7 +126,7 @@ export class AppSidebarComponent {
 
   openSubmenu: string | null | number = null;
   subMenuHeights: { [key: string]: number } = {};
-  @ViewChildren('subMenu') subMenuRefs!: QueryList<ElementRef>;
+  @ViewChildren("subMenu") subMenuRefs!: QueryList<ElementRef>;
 
   readonly isExpanded$;
   readonly isMobileOpen$;
@@ -141,7 +147,7 @@ export class AppSidebarComponent {
   ngOnInit() {
     // Subscribe to router events
     this.subscription.add(
-      this.router.events.subscribe(event => {
+      this.router.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
           this.setActiveMenuFromRoute(this.router.url);
         }
@@ -150,20 +156,22 @@ export class AppSidebarComponent {
 
     // Subscribe to combined observables to close submenus when all are false
     this.subscription.add(
-      combineLatest([this.isExpanded$, this.isMobileOpen$, this.isHovered$]).subscribe(
-        ([isExpanded, isMobileOpen, isHovered]) => {
-          if (!isExpanded && !isMobileOpen && !isHovered) {
-            // this.openSubmenu = null;
-            // this.savedSubMenuHeights = { ...this.subMenuHeights };
-            // this.subMenuHeights = {};
-            this.cdr.detectChanges();
-          } else {
-            // Restore saved heights when reopening
-            // this.subMenuHeights = { ...this.savedSubMenuHeights };
-            // this.cdr.detectChanges();
-          }
+      combineLatest([
+        this.isExpanded$,
+        this.isMobileOpen$,
+        this.isHovered$,
+      ]).subscribe(([isExpanded, isMobileOpen, isHovered]) => {
+        if (!isExpanded && !isMobileOpen && !isHovered) {
+          // this.openSubmenu = null;
+          // this.savedSubMenuHeights = { ...this.subMenuHeights };
+          // this.subMenuHeights = {};
+          this.cdr.detectChanges();
+        } else {
+          // Restore saved heights when reopening
+          // this.subMenuHeights = { ...this.savedSubMenuHeights };
+          // this.cdr.detectChanges();
         }
-      )
+      })
     );
 
     // Initial load
@@ -199,23 +207,25 @@ export class AppSidebarComponent {
   }
 
   onSidebarMouseEnter() {
-    this.isExpanded$.subscribe(expanded => {
-      if (!expanded) {
-        this.sidebarService.setHovered(true);
-      }
-    }).unsubscribe();
+    this.isExpanded$
+      .subscribe((expanded) => {
+        if (!expanded) {
+          this.sidebarService.setHovered(true);
+        }
+      })
+      .unsubscribe();
   }
 
   private setActiveMenuFromRoute(currentUrl: string) {
     const menuGroups = [
-      { items: this.navItems, prefix: 'main' },
-      { items: this.othersItems, prefix: 'others' },
+      { items: this.navItems, prefix: "main" },
+      { items: this.othersItems, prefix: "others" },
     ];
 
-    menuGroups.forEach(group => {
+    menuGroups.forEach((group) => {
       group.items.forEach((nav, i) => {
         if (nav.subItems) {
-          nav.subItems.forEach(subItem => {
+          nav.subItems.forEach((subItem) => {
             if (currentUrl === subItem.path) {
               const key = `${group.prefix}-${i}`;
               this.openSubmenu = key;
@@ -235,13 +245,13 @@ export class AppSidebarComponent {
   }
 
   onSubmenuClick() {
-    console.log('click submenu');
-    this.isMobileOpen$.subscribe(isMobile => {
-      if (isMobile) {
-        this.sidebarService.setMobileOpen(false);
-      }
-    }).unsubscribe();
-  }  
-
-  
+    console.log("click submenu");
+    this.isMobileOpen$
+      .subscribe((isMobile) => {
+        if (isMobile) {
+          this.sidebarService.setMobileOpen(false);
+        }
+      })
+      .unsubscribe();
+  }
 }

@@ -29,6 +29,10 @@ import { CalenderComponent } from './pages/calender/calender.component';
 import { NewMachineComponent } from './pages/machine_dashboard/new_machine/new_machine.component';
 import { MachineContentComponent } from './pages/machine_dashboard/machine_contents/machine_content.component';
 import { RegisteredMachineComponent } from './pages/machine_dashboard/registered_machine/registered_machine.component';
+import { NewCompanyComponent } from './pages/company_dashboard/new_company/new_company.component';
+
+// For the companies
+
 
 
 // Routes for the pages
@@ -69,6 +73,16 @@ export const routes: Routes = [
         component:RegisteredMachineComponent,
         title:'Extea Dashboard | Registered machine'
       },
+      {
+        path:'new_company',
+        component:NewCompanyComponent,
+        title:'Extea Dashboard | New Company'
+      },
+      // {
+      //   path:'registered_companies',
+      //   component:RegisteredMachineComponent,
+      //   title:'Extea Dashboard | Registered Companies'
+      // },
       {
         path:'profile',
         component:ProfileComponent,
