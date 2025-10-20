@@ -6,6 +6,7 @@ import { MachineFormComponent, MachineData } from '../../../shared/components/ac
 
 @Component({
     selector: 'app-new-machine',
+    standalone: true,
     imports: [
         CommonModule,
         PageBreadcrumbComponent,

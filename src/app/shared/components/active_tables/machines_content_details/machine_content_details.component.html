@@ -1,0 +1,263 @@
+<div class="space-y-6">
+  <!-- Machine Selection Form -->
+  <div class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-white/[0.05] dark:bg-white/[0.03]">
+    <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">Select Machine</h3>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+      <div class="md:col-span-3">
+        <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Machine ID
+        </label>
+        <app-select
+          [options]="machineOptions"
+          placeholder="Select a machine..."
+          [value]="selectedMachineId"
+          (valueChange)="onMachineSelect($event)"
+        ></app-select>
+      </div>
+      <div class="flex items-end">
+        <app-button
+          variant="primary"
+          className="w-full"
+          [disabled]="!selectedMachineId"
+          (btnClick)="searchMachineContent()"
+        >
+          Search
+        </app-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Machine Info Card -->
+  @if (getCurrentMachineInfo()) {
+  <div class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-white/[0.05] dark:bg-white/[0.03]">
+    <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-white/90">Machine Information</h3>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Machine ID</p>
+        <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ getCurrentMachineInfo()?.machineId }}</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Company</p>
+        <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ getCurrentMachineInfo()?.registeredCompany }}</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Total Slots</p>
+        <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ getCurrentMachineInfo()?.slots }}</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Location</p>
+        <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ getCurrentMachineInfo()?.address }}</p>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Machine Content Table -->
+  @if (currentMachineContent.length > 0) {
+  <div class="rounded-2xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+    <div class="flex items-center justify-between p-6">
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Machine Content</h3>
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        Showing {{ currentMachineContent.length }} slot(s)
+      </p>
+    </div>
+
+    <div class="overflow-hidden">
+      <div class="max-w-full overflow-x-auto">
+        <table class="min-w-full">
+          <thead class="border-gray-100 border-y dark:border-white/[0.05]">
+            <tr>
+              <th class="px-4 py-3 text-start text-theme-sm font-normal text-gray-500 dark:text-gray-400">ID</th>
+              <th class="px-4 py-3 text-start text-theme-sm font-normal text-gray-500 dark:text-gray-400">Slot</th>
+              <th class="px-4 py-3 text-start text-theme-sm font-normal text-gray-500 dark:text-gray-400">Beverage</th>
+              <th class="px-4 py-3 text-start text-theme-sm font-normal text-gray-500 dark:text-gray-400">Available Cups</th>
+              <th class="px-4 py-3 text-start text-theme-sm font-normal text-gray-500 dark:text-gray-400">Water/Cup (ml)</th>
+              <th class="px-4 py-3 text-start text-theme-sm font-normal text-gray-500 dark:text-gray-400">Powder/Cup (g)</th>
+              <th class="px-4 py-3 text-start text-theme-sm font-normal text-gray-500 dark:text-gray-400">Mixing (sec)</th>
+              <th class="px-4 py-3 text-start text-theme-sm font-normal text-gray-500 dark:text-gray-400">Price ($)</th>
+              <th class="px-4 py-3 text-start text-theme-sm font-normal text-gray-500 dark:text-gray-400">
+                <span class="sr-only">Actions</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100 dark:divide-white/[0.05]">
+            @for (item of currentMachineContent; track item.id) {
+            <tr>
+              <td class="px-4 py-4 text-theme-sm text-gray-700 dark:text-gray-400">
+                {{ item.id }}
+              </td>
+              <td class="px-4 py-4 text-theme-sm text-gray-700 dark:text-gray-400">
+                {{ item.slotNumber }}
+              </td>
+              <td class="px-4 py-4 text-theme-sm text-gray-700 dark:text-gray-400">
+                {{ item.beverage }}
+              </td>
+              <td class="px-4 py-4 text-theme-sm text-gray-700 dark:text-gray-400">
+                {{ item.availableCups }}
+              </td>
+              <td class="px-4 py-4 text-theme-sm text-gray-700 dark:text-gray-400">
+                {{ item.waterPerCup }}ml
+              </td>
+              <td class="px-4 py-4 text-theme-sm text-gray-700 dark:text-gray-400">
+                {{ item.powderPerCup }}g
+              </td>
+              <td class="px-4 py-4 text-theme-sm text-gray-700 dark:text-gray-400">
+                {{ item.mixingTime }}s
+              </td>
+              <td class="px-4 py-4 text-theme-sm text-gray-700 dark:text-gray-400">
+                ${{ item.price.toFixed(2) }}
+              </td>
+              <td class="px-4 py-4 text-theme-sm text-gray-700 dark:text-gray-400">
+                <app-button
+                  size="sm"
+                  variant="outline"
+                  (btnClick)="editContent(item)"
+                >
+                  Edit
+                </app-button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  } @else if (selectedMachineId) {
+  <div class="rounded-2xl border border-gray-200 bg-white p-8 text-center dark:border-white/[0.05] dark:bg-white/[0.03]">
+    <p class="text-gray-500 dark:text-gray-400">No content found for the selected machine.</p>
+  </div>
+  }
+</div>
+
+<!-- Edit Content Modal -->
+<app-modal
+  [isOpen]="isEditModalOpen"
+  (close)="closeEditModal()"
+  className="max-w-2xl"
+>
+  <div class="p-6">
+    <!-- Modal Header -->
+    <div class="mb-6">
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
+        Edit Slot Content
+      </h3>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        Update beverage details and configuration
+      </p>
+    </div>
+
+    <!-- Edit Form -->
+    <div class="space-y-6">
+      <!-- Beverage Selection -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+          Beverage
+        </label>
+        <app-select
+          [options]="beverageOptions"
+          placeholder="Select beverage..."
+          [value]="editForm.beverage"
+          (valueChange)="onBeverageChange($event)"
+          className="w-full"
+        />
+      </div>
+
+      <!-- Available Cups & Price -->
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+            Available Cups
+          </label>
+          <app-input-field
+            type="number"
+            placeholder="Enter available cups"
+            [value]="editForm.availableCups.toString()"
+            (valueChange)="onAvailableCupsChange($event)"
+            min="0"
+            className="w-full"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+            Price ($)
+          </label>
+          <app-input-field
+            type="number"
+            placeholder="Enter price"
+            [value]="editForm.price.toString()"
+            (valueChange)="onPriceChange($event)"
+            stepValue="0.01"
+            min="0"
+            className="w-full"
+          />
+        </div>
+      </div>
+
+      <!-- Beverage Configuration -->
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+            Water Per Cup (ml)
+          </label>
+          <app-input-field
+            type="number"
+            placeholder="Water in ml"
+            [value]="editForm.waterPerCup.toString()"
+            (valueChange)="onWaterPerCupChange($event)"
+            min="0"
+            className="w-full"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+            Powder Per Cup (g)
+          </label>
+          <app-input-field
+            type="number"
+            placeholder="Powder in grams"
+            [value]="editForm.powderPerCup.toString()"
+            (valueChange)="onPowderPerCupChange($event)"
+            min="0"
+            className="w-full"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+            Mixing Time (sec)
+          </label>
+          <app-input-field
+            type="number"
+            placeholder="Mixing time"
+            [value]="editForm.mixingTime.toString()"
+            (valueChange)="onMixingTimeChange($event)"
+            min="0"
+            className="w-full"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Actions -->
+    <div class="flex gap-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+      <app-button
+        variant="outline"
+        (btnClick)="closeEditModal()"
+        className="flex-1"
+      >
+        Cancel
+      </app-button>
+      <app-button
+        variant="primary"
+        (btnClick)="saveContent()"
+        [disabled]="!isFormValid()"
+        className="flex-1"
+      >
+        Save Changes
+      </app-button>
+    </div>
+  </div>
+</app-modal>
