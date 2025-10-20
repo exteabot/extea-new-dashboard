@@ -27,6 +27,7 @@ export class PageBreadcrumbComponent implements OnInit {
     '/new_machine': { main: 'Machines', sub: 'New Machine' },
     '/registered_machine': { main: 'Machines', sub: 'Registered Machines' },
     '/machine_content': { main: 'Machines', sub: 'Machine Contents' },
+    '/new_company': { main: 'Partner Companies', sub: 'New Machine'},
     '/calendar': { main: 'Calendar', sub: '' },
     '/profile': { main: 'User Profile', sub: '' },
     '/form-elements': { main: 'Forms', sub: 'Form Elements' },
