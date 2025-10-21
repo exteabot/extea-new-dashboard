@@ -1,0 +1,26 @@
+<div class="container mx-auto px-4 py-8">
+    <app-page-breadcrumb pageTitle="New Beverage" />
+    
+    <!-- Form Container -->
+    <div class="mt-6 max-w-2xl mx-auto">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <!-- Form Header -->
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
+                    Create New Beverage
+                </h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Fill in the details below to add a new beverage to your inventory.
+                </p>
+            </div>
+            
+            <!-- Beverage Form -->
+            <div class="p-6">
+                <app-new-beverage-form
+                    (formSubmit)="onFormSubmit($event)"
+                    (formCancel)="onFormCancel()"
+                ></app-new-beverage-form>
+            </div>
+        </div>
+    </div>
+</div>
