@@ -34,6 +34,10 @@ import { RegisteredMachineComponent } from './pages/machine_dashboard/registered
 import { NewCompanyComponent } from './pages/company_dashboard/new_company/new_company.component';
 import { RegisteredCompaniesComponent } from './pages/company_dashboard/registered_companies/registered_companies.component';
 
+// For the beverages
+import { NewBeverageComponent } from './pages/beverages_dashboard/new_beverage/new_beverage.component';
+import { ManageBeveragesComponent } from './pages/beverages_dashboard/manage_beverages/manage_beverages.component';
+
 
 
 // Routes for the pages
@@ -59,30 +63,47 @@ export const routes: Routes = [
         component:CalenderComponent,
         title:'Angular Calender | TailAdmin - Angular Admin Dashboard Template'
       },
+      // For new machine
       {
         path:'new_machine',
         component:NewMachineComponent,
         title:'Extea Dashboard | Create new machine'
       },
+      // For machine content
       {
         path:'machine_content',
         component:MachineContentComponent,
         title:'Extea Dashboard | Machine content'
       },
+      // For registered machines
       {
         path:'registered_machine',
         component:RegisteredMachineComponent,
         title:'Extea Dashboard | Registered machine'
       },
+      // For new company
       {
         path:'new_company',
         component:NewCompanyComponent,
         title:'Extea Dashboard | New Company'
       },
+      // For registered companies
       {
         path:'registered_companies',
         component:RegisteredCompaniesComponent,
         title:'Extea Dashboard | Registered Companies'
+      },
+      // For new beverages
+      {
+        path:'new_beverage',
+        component:NewBeverageComponent,
+        title:'Extea Dashboard | New Beverage'
+      },
+      // For manage beverages
+      {
+        path:'manage_beverages',
+        component:ManageBeveragesComponent,
+        title:'Extea Dashboard | Manage Beverages'
       },
       {
         path:'profile',
