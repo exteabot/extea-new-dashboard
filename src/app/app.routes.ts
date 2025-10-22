@@ -42,6 +42,13 @@ import { ManageBeveragesComponent } from './pages/beverages_dashboard/manage_bev
 import { IndividualBeverageSalesComponent } from './pages/sales_dashboard/manage_individual_sales/manage_individual_sales.component';
 import { BeverageSalesComponent } from './pages/sales_dashboard/manage_sales/manage_sales.component';
 
+// For the NFC sales and related
+import { NFCTopUp } from './pages/nfc_dashboard/balance_topup/balance_topup.component';
+import { NewNFC } from './pages/nfc_dashboard/new_nfc/new_nfc.component';
+import { NFCDetails } from './pages/nfc_dashboard/nfc_details/nfc_details.component';
+import { NFCTopUpHistory } from './pages/nfc_dashboard/topup_history/topup_history.component';
+import { NFCPayRefunds } from './pages/nfc_dashboard/payment_refund/payment_refund.component';
+
 
 
 // Routes for the pages
@@ -120,6 +127,36 @@ export const routes: Routes = [
         path:'individual_beverage_sales',
         component:IndividualBeverageSalesComponent,
         title:'Extea Dashboard | Individual Beverage Sales'
+      },
+      // For new NFC
+      {
+        path:'new_nfc',
+        component:NewNFC,
+        title:'Extea Dashboard | Create New NFC'
+      },
+      // For NFC details
+      {
+        path:'nfc_details',
+        component:NFCDetails,
+        title:'Extea Dashboard | Manage NFC Detailss'
+      },
+      // For NFC balance & topups
+      {
+        path:'nfc_balance_topup',
+        component:NFCTopUp,
+        title:'Extea Dashboard | Create NFC Balance Top-Up'
+      },
+      // For NFC topup history
+      {
+        path:'nfc_topup_history',
+        component:NFCTopUpHistory,
+        title:'Extea Dashboard | Manage NFC Top-Up'
+      },
+      // For NFC payment and refund history
+      {
+        path:'nfc_payment_refund_history',
+        component:NFCPayRefunds,
+        title:'Extea Dashboard | Manage NFC Payments and Refunds'
       },
       {
         path:'profile',
