@@ -32,7 +32,7 @@ export class PageBreadcrumbComponent implements OnInit {
     '/new_beverage': { main: 'Beverages', sub: 'New Beverage' },
     '/manage_beverages': { main: 'Beverages', sub: 'Manage Beverages' },
     '/beverage_sales': { main: 'Sales', sub: 'Manage Total Sales' },
-    '/individual_beverage_sales': { main: 'Sales', sub: 'Manage Beverage Sales' },
+    '/individual_beverage_sales': { main: 'Sales', sub: 'Manage Individual Beverage Sales' },
     '/calendar': { main: 'Calendar', sub: '' },
     '/profile': { main: 'User Profile', sub: '' },
     '/form-elements': { main: 'Forms', sub: 'Form Elements' },

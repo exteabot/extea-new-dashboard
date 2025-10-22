@@ -6,6 +6,7 @@ import "flatpickr/dist/flatpickr.css";
 
 @Component({
   selector: 'app-date-picker',
+  standalone: true,
   imports: [CommonModule,LabelComponent],
   templateUrl: './date-picker.component.html',
   styles: ``

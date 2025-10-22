@@ -38,6 +38,10 @@ import { RegisteredCompaniesComponent } from './pages/company_dashboard/register
 import { NewBeverageComponent } from './pages/beverages_dashboard/new_beverage/new_beverage.component';
 import { ManageBeveragesComponent } from './pages/beverages_dashboard/manage_beverages/manage_beverages.component';
 
+// For the sales
+import { IndividualBeverageSalesComponent } from './pages/sales_dashboard/manage_individual_sales/manage_individual_sales.component';
+import { BeverageSalesComponent } from './pages/sales_dashboard/manage_sales/manage_sales.component';
+
 
 
 // Routes for the pages
@@ -104,6 +108,18 @@ export const routes: Routes = [
         path:'manage_beverages',
         component:ManageBeveragesComponent,
         title:'Extea Dashboard | Manage Beverages'
+      },
+      // For beverage sales
+      {
+        path:'beverage_sales',
+        component:BeverageSalesComponent,
+        title:'Extea Dashboard | Beverage Sales'
+      },
+      // For invidual beverage sales
+      {
+        path:'individual_beverage_sales',
+        component:IndividualBeverageSalesComponent,
+        title:'Extea Dashboard | Individual Beverage Sales'
       },
       {
         path:'profile',
