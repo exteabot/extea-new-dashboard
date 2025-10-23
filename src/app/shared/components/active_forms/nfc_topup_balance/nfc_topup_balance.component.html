@@ -1,0 +1,67 @@
+<app-component-card title="NFC Balance Management">
+  <div class="space-y-6">
+    <!-- NFC System ID Input -->
+    <div>
+      <app-label for="nfcId">NFC System ID</app-label>
+      <app-input-field
+        id="nfcId"
+        type="text"
+        [(value)]="nfcSystemId"
+        placeholder="Enter NFC System ID"
+        [error]="nfcError"
+        [hint]="nfcError ? 'Please check the entered NFC System ID' : ''"
+      />
+    </div>
+
+    <!-- Current Balance Display -->
+    <div *ngIf="currentBalance !== null">
+      <app-label>Current Balance</app-label>
+      <div
+        class="p-3 text-lg font-semibold text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+      >
+        ${{ currentBalance.toFixed(2) }}
+      </div>
+    </div>
+
+    <!-- Top-Up Amount Input -->
+    <div>
+      <app-label for="topUpAmount">Top-Up Amount</app-label>
+      <app-input-field
+        id="topUpAmount"
+        type="number"
+        [(value)]="topUpAmount"
+        placeholder="0.00"
+        stepValue="0.01"
+        min="0"
+      />
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex gap-4">
+      <app-button (btnClick)="checkBalance()" [disabled]="!nfcSystemId">
+        Check Balance
+      </app-button>
+
+      <app-button
+        variant="outline"
+        (btnClick)="topUpBalance()"
+        [disabled]="!nfcSystemId || !topUpAmount || topUpAmount <= 0"
+      >
+        Top-Up Now
+      </app-button>
+    </div>
+
+    <!-- Messages -->
+    <div
+      *ngIf="message"
+      [class]="
+        messageType === 'error'
+          ? 'text-red-600 dark:text-red-400'
+          : 'text-green-600 dark:text-green-400'
+      "
+      class="text-sm font-medium"
+    >
+      {{ message }}
+    </div>
+  </div>
+</app-component-card>
