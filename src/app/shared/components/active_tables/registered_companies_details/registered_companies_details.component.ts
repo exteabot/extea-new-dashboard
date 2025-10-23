@@ -7,6 +7,8 @@ import { ModalComponent } from '../../ui/modal/modal.component';
 import { FormsModule } from '@angular/forms';
 import { InputFieldComponent } from '../../form/input/input-field.component';
 import { SelectComponent, Option } from '../../form/select/select.component';
+import { ReportService, ReportColumn } from '../../../services/report.service';
+import { ReportViewerComponent } from '../../reports/report.component'; 
 
 interface Company {
   id: string;
@@ -28,7 +30,8 @@ interface Company {
     ModalComponent,
     FormsModule,
     InputFieldComponent,
-    SelectComponent
+    SelectComponent,
+    ReportViewerComponent, // Add report component
   ],
   templateUrl: './registered_companies_details.component.html',
   styles: ``
@@ -42,6 +45,9 @@ export class RegisteredCompaniesTableComponent {
     address: '',
     status: 'All'
   };
+
+  // Report Modal Properties
+  isReportModalOpen = false;
 
   // Status options
   statusOptions: Option[] = [
@@ -152,6 +158,114 @@ export class RegisteredCompaniesTableComponent {
   isEditModalOpen = false;
   selectedCompany: Company | null = null;
   editForm: Partial<Company> = {};
+
+  constructor(private reportService: ReportService) {}
+
+  // Generate Companies Report
+  generateReport() {
+    if (this.companiesData.length === 0) {
+      console.warn('No companies data available for report');
+      return;
+    }
+
+    // Calculate status distribution
+    const statusDistribution = this.companiesData.reduce((acc, company) => {
+      const status = company.isActive ? 'Active' : 'Inactive';
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    }, {} as { [key: string]: number });
+
+    // Calculate registration timeline
+    const currentYear = new Date().getFullYear();
+    const registrationByMonth = this.companiesData.reduce((acc, company) => {
+      const month = company.addedDate.toLocaleString('default', { month: 'long' });
+      acc[month] = (acc[month] || 0) + 1;
+      return acc;
+    }, {} as { [key: string]: number });
+
+    const summary = {
+      totalCompanies: this.companiesData.length,
+      activeCompanies: statusDistribution['Active'] || 0,
+      inactiveCompanies: statusDistribution['Inactive'] || 0,
+      activePercentage: Math.round(((statusDistribution['Active'] || 0) / this.companiesData.length) * 100),
+      averageRegistrationAge: this.getAverageRegistrationAge(),
+      newestCompany: this.getNewestCompany(),
+      oldestCompany: this.getOldestCompany(),
+      mostCommonLocation: this.getMostCommonLocation()
+    };
+
+    const reportColumns: ReportColumn[] = [
+      { key: 'id', label: 'ID', type: 'text' },
+      { key: 'companyName', label: 'Company Name', type: 'text' },
+      { key: 'address', label: 'Address', type: 'text' },
+      { key: 'telephoneNumber', label: 'Telephone', type: 'text' },
+      { key: 'contactPerson', label: 'Contact Person', type: 'text' },
+      { key: 'addedDate', label: 'Added Date', type: 'text', format: (value) => this.formatDate(value) },
+      { key: 'isActive', label: 'Status', type: 'badge', format: (value) => value ? 'Active' : 'Inactive' }
+    ];
+
+    this.reportService.generateReport({
+      title: 'Registered Companies Report',
+      filters: { ...this.filterForm },
+      items: [...this.companiesData],
+      columns: reportColumns,
+      summary: summary
+    });
+
+    this.isReportModalOpen = true;
+  }
+
+  // Helper method to calculate average registration age in months
+  private getAverageRegistrationAge(): string {
+    const now = new Date();
+    const totalAge = this.companiesData.reduce((sum, company) => {
+      const ageInMonths = (now.getTime() - company.addedDate.getTime()) / (1000 * 60 * 60 * 24 * 30);
+      return sum + ageInMonths;
+    }, 0);
+    
+    const averageMonths = totalAge / this.companiesData.length;
+    return `${averageMonths.toFixed(1)} months`;
+  }
+
+  // Helper method to get newest company
+  private getNewestCompany(): string {
+    const newest = this.companiesData.reduce((latest, company) => 
+      company.addedDate > latest.addedDate ? company : latest
+    );
+    return `${newest.companyName} (${this.formatDate(newest.addedDate)})`;
+  }
+
+  // Helper method to get oldest company
+  private getOldestCompany(): string {
+    const oldest = this.companiesData.reduce((earliest, company) => 
+      company.addedDate < earliest.addedDate ? company : earliest
+    );
+    return `${oldest.companyName} (${this.formatDate(oldest.addedDate)})`;
+  }
+
+  // Helper method to get most common location (city)
+  private getMostCommonLocation(): string {
+    const locationCount = this.companiesData.reduce((acc, company) => {
+      // Extract city from address (simple extraction)
+      const cityMatch = company.address.match(/,\s*([^,]+),\s*[A-Z]{2}/);
+      if (cityMatch) {
+        const city = cityMatch[1];
+        acc[city] = (acc[city] || 0) + 1;
+      }
+      return acc;
+    }, {} as { [key: string]: number });
+
+    const entries = Object.entries(locationCount);
+    if (entries.length === 0) return 'N/A';
+    
+    const sorted = entries.sort((a, b) => b[1] - a[1]);
+    return `${sorted[0][0]} (${sorted[0][1]} companies)`;
+  }
+
+  closeReportModal() {
+    this.isReportModalOpen = false;
+    this.reportService.clearReport();
+  }
 
   get totalPages(): number {
     return Math.ceil(this.companiesData.length / this.itemsPerPage);

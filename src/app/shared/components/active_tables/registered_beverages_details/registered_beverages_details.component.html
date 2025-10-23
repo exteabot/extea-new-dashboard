@@ -74,6 +74,14 @@
       >
         Reset
       </app-button>
+      <app-button
+        size="sm"
+        variant="primary"
+        (btnClick)="generateReport()"
+        className="min-w-[100px] flex-1 sm:flex-none"
+      >
+        Generate Report
+      </app-button>
     </div>
   </div>
   <div
@@ -372,6 +380,10 @@
       </app-button>
     </div>
   </div>
+  <app-report-viewer
+    [isOpen]="isReportOpen"
+    (close)="closeReport()"
+  ></app-report-viewer>
 </div>
 
 <!-- Edit Beverage Modal -->

@@ -6,6 +6,8 @@ import { BadgeComponent } from "../../ui/badge/badge.component";
 import { InputFieldComponent } from "../../form/input/input-field.component";
 import { SelectComponent, Option } from "../../form/select/select.component";
 import { ModalComponent } from "../../ui/modal/modal.component";
+import { ReportService, ReportColumn } from "../../../services/report.service";
+import { ReportViewerComponent } from "../../reports/report.component";
 
 interface Machine {
   id: string;
@@ -30,6 +32,7 @@ interface Machine {
     InputFieldComponent,
     SelectComponent,
     ModalComponent,
+    ReportViewerComponent,
   ],
   templateUrl: "./machine_details.component.html",
   styles: ``,
@@ -203,6 +206,11 @@ export class MachinesTableComponent {
     }
   }
 
+  // Report Modal
+  isReportModalOpen = false;
+
+  constructor(private reportService: ReportService) {}
+
   // Apply filters
   applyFilters() {
     this.machineData = this.originalMachineData.filter((machine) => {
@@ -347,5 +355,65 @@ export class MachinesTableComponent {
     if (level >= 80) return "text-green-600 dark:text-green-400";
     if (level >= 50) return "text-yellow-600 dark:text-yellow-400";
     return "text-red-600 dark:text-red-400";
+  }
+
+  generateReport() {
+    const summary = {
+      totalSlots: this.machineData.reduce(
+        (sum, machine) => sum + machine.slots,
+        0
+      ),
+      activePowerCount: this.machineData.filter(
+        (machine) => machine.powerStatus === "Active"
+      ).length,
+      activeStatusCount: this.machineData.filter(
+        (machine) => machine.activeStatus === "Active"
+      ).length,
+      averageSugarLevel: Math.round(
+        this.machineData.reduce((sum, machine) => sum + machine.sugarLevel, 0) /
+          this.machineData.length || 0
+      ),
+      averageWaterLevel: Math.round(
+        this.machineData.reduce((sum, machine) => sum + machine.waterLevel, 0) /
+          this.machineData.length || 0
+      ),
+    };
+
+    const reportColumns: ReportColumn[] = [
+      { key: "id", label: "ID", type: "text" },
+      { key: "machineId", label: "Machine ID", type: "text" },
+      { key: "registeredCompany", label: "Company", type: "text" },
+      { key: "slots", label: "Slots", type: "number" },
+      { key: "powerStatus", label: "Power Status", type: "badge" },
+      { key: "activeStatus", label: "Active Status", type: "status" },
+      {
+        key: "sugarLevel",
+        label: "Sugar Level",
+        type: "level",
+        format: (value) => `${value}%`,
+      },
+      {
+        key: "waterLevel",
+        label: "Water Level",
+        type: "level",
+        format: (value) => `${value}%`,
+      },
+      { key: "address", label: "Address", type: "text" },
+    ];
+
+    this.reportService.generateReport({
+      title: "Machine Details Report",
+      filters: { ...this.filterForm },
+      items: [...this.machineData],
+      columns: reportColumns,
+      summary: summary,
+    });
+
+    this.isReportModalOpen = true;
+  }
+
+  closeReportModal() {
+    this.isReportModalOpen = false;
+    this.reportService.clearReport();
   }
 }

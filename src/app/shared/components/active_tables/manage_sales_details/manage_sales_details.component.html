@@ -13,6 +13,14 @@
           <app-button size="sm" variant="outline" (btnClick)="resetFilters()">
             Reset
           </app-button>
+          <app-button 
+            size="sm" 
+            variant="outline" 
+            (btnClick)="generateReport()"
+            [disabled]="salesData.length === 0"
+          >
+            Generate Report
+          </app-button>
           <app-button size="sm" (btnClick)="applyFilters()">
             Search
           </app-button>
@@ -75,6 +83,7 @@
             Date From
           </label>
           <app-date-picker
+            #dateFromPicker
             id="dateFrom"
             label=""
             mode="single"
@@ -92,6 +101,7 @@
             Date To
           </label>
           <app-date-picker
+            #dateToPicker
             id="dateTo"
             label=""
             mode="single"
@@ -104,6 +114,7 @@
     </div>
   </div>
 
+  <!-- Rest of the template remains the same -->
   <!-- Summary Cards -->
   <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
     <!-- Total Cups Sold -->
@@ -191,6 +202,14 @@
         </p>
       </div>
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <app-button
+          size="sm"
+          variant="outline"
+          (btnClick)="generateReport()"
+          [disabled]="salesData.length === 0"
+        >
+          Generate Report
+        </app-button>
         <form>
           <div class="relative">
             <button
@@ -535,3 +554,9 @@
   </div>
   }
 </app-modal>
+
+<!-- Report Modal -->
+<app-report-viewer
+  [isOpen]="isReportModalOpen"
+  (close)="closeReportModal()"
+></app-report-viewer>

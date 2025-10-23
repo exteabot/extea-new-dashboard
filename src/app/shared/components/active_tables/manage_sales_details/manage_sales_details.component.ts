@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, ViewChild  } from "@angular/core";
 import { ButtonComponent } from "../../ui/button/button.component";
 import { TableDropdownComponent } from "../../common/table-dropdown/table-dropdown.component";
 import { BadgeComponent } from "../../ui/badge/badge.component";
@@ -8,6 +8,8 @@ import { InputFieldComponent } from "../../form/input/input-field.component";
 import { InputFieldWithSuggestionsComponent } from "../../form/input/input-field-with-suggestion";
 import { DatePickerComponent } from "../../form/date-picker/date-picker.component";
 import { SelectComponent, Option } from "../../form/select/select.component";
+import { ReportService, ReportColumn } from "../../../services/report.service";
+import { ReportViewerComponent } from "../../reports/report.component";
 
 interface SaleItem {
   beverageName: string;
@@ -38,11 +40,16 @@ interface SalesRecord {
     InputFieldWithSuggestionsComponent,
     SelectComponent,
     DatePickerComponent,
+    ReportViewerComponent,
   ],
   templateUrl: "./manage_sales_details.component.html",
   styles: ``,
 })
 export class TotalSalesTableComponent {
+  // ViewChild references to reset date pickers
+  @ViewChild('dateFromPicker') dateFromPicker!: DatePickerComponent;
+  @ViewChild('dateToPicker') dateToPicker!: DatePickerComponent;
+
   originalSalesData: SalesRecord[] = [
     {
       salesId: "SALE-001",
@@ -686,6 +693,12 @@ export class TotalSalesTableComponent {
     },
   ];
 
+  // Default dates for reset
+  private defaultDateFrom: string = this.getFormattedDate(new Date());
+  private defaultDateTo: string = this.getFormattedDate(
+    new Date(Date.now() + 24 * 60 * 60 * 1000)
+  ); // Tomorrow
+
   // Filter form values
   filterForm = {
     companyName: "",
@@ -694,6 +707,9 @@ export class TotalSalesTableComponent {
     dateFrom: this.getFormattedDate(new Date()),
     dateTo: this.getFormattedDate(new Date(Date.now() + 24 * 60 * 60 * 1000)), // Tomorrow
   };
+
+  // Report Modal Properties
+  isReportModalOpen = false;
 
   // Payment Method options
   paymentMethodOptions: Option[] = [
@@ -711,8 +727,125 @@ export class TotalSalesTableComponent {
   selectedSale: SalesRecord | null = null;
   isModalOpen = false;
 
-  constructor() {
+  constructor(private reportService: ReportService) {
     this.applyFilters(); // Apply initial filters on load
+  }
+
+  // Generate Sales Report
+  generateReport() {
+    if (this.salesData.length === 0) {
+      console.warn("No sales data available for report");
+      return;
+    }
+
+    // Calculate payment method distribution
+    const paymentDistribution = this.salesData.reduce((acc, sale) => {
+      acc[sale.paymentMethod] = (acc[sale.paymentMethod] || 0) + 1;
+      return acc;
+    }, {} as { [key: string]: number });
+
+    // Calculate company distribution
+    const companyDistribution = this.salesData.reduce((acc, sale) => {
+      acc[sale.registeredCompany] = (acc[sale.registeredCompany] || 0) + 1;
+      return acc;
+    }, {} as { [key: string]: number });
+
+    // Calculate machine distribution
+    const machineDistribution = this.salesData.reduce((acc, sale) => {
+      acc[sale.machineId] = (acc[sale.machineId] || 0) + 1;
+      return acc;
+    }, {} as { [key: string]: number });
+
+    // Calculate beverage distribution from all items
+    const beverageDistribution = this.salesData.reduce((acc, sale) => {
+      sale.items.forEach((item) => {
+        acc[item.beverageName] =
+          (acc[item.beverageName] || 0) + item.soldAmount;
+      });
+      return acc;
+    }, {} as { [key: string]: number });
+
+    const summary = {
+      totalCupsSold: this.totalCupsSold,
+      totalRevenue: this.totalAmount,
+      averageSaleValue: parseFloat(
+        (this.totalAmount / this.salesData.length).toFixed(2)
+      ),
+      averageCupsPerSale: parseFloat(
+        (this.totalCupsSold / this.salesData.length).toFixed(1)
+      ),
+      dateRange: this.getDateRangeText(),
+      topPaymentMethod: this.getTopItem(paymentDistribution),
+      topCompany: this.getTopItem(companyDistribution),
+      topMachine: this.getTopItem(machineDistribution),
+      topBeverage: this.getTopItem(beverageDistribution),
+      totalRecords: this.salesData.length,
+    };
+
+    const reportColumns: ReportColumn[] = [
+      { key: "salesId", label: "Sales ID", type: "text" },
+      { key: "machineId", label: "Machine ID", type: "text" },
+      { key: "registeredCompany", label: "Company", type: "text" },
+      { key: "totalCups", label: "Total Cups", type: "number" },
+      {
+        key: "totalPrice",
+        label: "Total Price",
+        type: "number",
+        format: (value) => this.formatCurrency(value),
+      },
+      { key: "paymentMethod", label: "Payment Method", type: "text" },
+      {
+        key: "date",
+        label: "Date",
+        type: "text",
+        format: (value) => this.formatDate(value),
+      },
+      {
+        key: "time",
+        label: "Time",
+        type: "text",
+        format: (value) => this.formatTime(value),
+      },
+    ];
+
+    this.reportService.generateReport({
+      title: "Total Sales Report",
+      filters: { ...this.filterForm },
+      items: [...this.salesData],
+      columns: reportColumns,
+      summary: summary,
+    });
+
+    this.isReportModalOpen = true;
+  }
+
+  // Helper method to get top item from distribution
+  private getTopItem(distribution: { [key: string]: number }): string {
+    const entries = Object.entries(distribution);
+    if (entries.length === 0) return "N/A";
+
+    const sorted = entries.sort((a, b) => b[1] - a[1]);
+    return `${sorted[0][0]} (${sorted[0][1]})`;
+  }
+
+  // Helper method to get date range text
+  private getDateRangeText(): string {
+    if (this.filterForm.dateFrom && this.filterForm.dateTo) {
+      return `${this.formatDate(this.filterForm.dateFrom)} to ${this.formatDate(
+        this.filterForm.dateTo
+      )}`;
+    } else if (this.filterForm.dateFrom) {
+      return `From ${this.formatDate(this.filterForm.dateFrom)}`;
+    } else if (this.filterForm.dateTo) {
+      return `Until ${this.formatDate(this.filterForm.dateTo)}`;
+    } else {
+      return "All dates";
+    }
+  }
+
+  closeReportModal() {
+    this.isReportModalOpen = false;
+    this.reportService.clearReport();
   }
 
   // Helper method to format date as YYYY-MM-DD
@@ -820,19 +953,30 @@ export class TotalSalesTableComponent {
     this.currentPage = 1; // Reset to first page after filtering
   }
 
+  // Reset filters - updated to properly reset date pickers
   resetFilters() {
     // Reset filter form values
     this.filterForm = {
       companyName: "",
       machineId: "",
       paymentMethod: "All",
-      dateFrom: this.getFormattedDate(new Date()), // Today
-      dateTo: this.getFormattedDate(new Date(Date.now() + 24 * 60 * 60 * 1000)), // Tomorrow
+      dateFrom: this.defaultDateFrom,
+      dateTo: this.defaultDateTo,
     };
 
     // Reset the sales data to show all records
     this.salesData = [...this.originalSalesData];
     this.currentPage = 1;
+
+    // Reset date pickers if they are available
+    setTimeout(() => {
+      if (this.dateFromPicker) {
+        this.dateFromPicker.resetToDefault();
+      }
+      if (this.dateToPicker) {
+        this.dateToPicker.resetToDefault();
+      }
+    }, 0);
 
     // Trigger the filter to update the display
     this.applyFilters();

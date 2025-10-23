@@ -103,6 +103,14 @@
       >
         Reset
       </app-button>
+      <app-button
+        size="sm"
+        variant="outline"
+        (btnClick)="generateReport()"
+        className="min-w-[80px] flex-1 sm:flex-none"
+      >
+        Generate Report
+      </app-button>
     </div>
   </div>
 
@@ -654,3 +662,8 @@
     </div>
   </div>
 </app-modal>
+
+<app-report-viewer
+  [isOpen]="isReportModalOpen"
+  (close)="closeReportModal()"
+></app-report-viewer>

@@ -77,6 +77,15 @@
       >
         Reset
       </app-button>
+      <app-button
+        size="sm"
+        variant="outline"
+        (btnClick)="generateReport()"
+        [disabled]="companiesData.length === 0"
+        className="min-w-[80px] flex-1 sm:flex-none"
+      >
+        Generate Report
+      </app-button>
     </div>
   </div>
 
@@ -90,6 +99,14 @@
       </p>
     </div>
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <app-button
+        size="sm"
+        variant="outline"
+        (btnClick)="generateReport()"
+        [disabled]="companiesData.length === 0"
+      >
+        Generate Report
+      </app-button>
       <form>
         <div class="relative">
           <button class="absolute -translate-y-1/2 left-4 top-1/2" type="button">
@@ -364,3 +381,9 @@
     </form>
   </div>
 </app-modal>
+
+<!-- Report Modal -->
+<app-report-viewer
+  [isOpen]="isReportModalOpen"
+  (close)="closeReportModal()"
+></app-report-viewer>

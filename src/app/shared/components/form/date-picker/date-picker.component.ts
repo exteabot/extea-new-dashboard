@@ -37,6 +37,38 @@ export class DatePickerComponent {
     });
   }
 
+  // Method to reset the date picker to default or clear it
+  resetToDefault(defaultDate?: string | Date | string[] | Date[]) {
+    if (this.flatpickrInstance) {
+      if (defaultDate) {
+        // Set to provided default date
+        this.flatpickrInstance.setDate(defaultDate, true);
+      } else {
+        // Clear the date picker
+        this.flatpickrInstance.clear();
+      }
+      
+      // Emit change event with empty values
+      this.dateChange.emit({ 
+        selectedDates: [], 
+        dateStr: '', 
+        instance: this.flatpickrInstance 
+      });
+    }
+  }
+
+  // Method to set a specific date
+  setDate(date: string | Date | string[] | Date[]) {
+    if (this.flatpickrInstance) {
+      this.flatpickrInstance.setDate(date, true);
+    }
+  }
+
+  // Method to clear the date picker
+  clear() {
+    this.resetToDefault();
+  }
+
   ngOnDestroy() {
     if (this.flatpickrInstance) {
       this.flatpickrInstance.destroy();

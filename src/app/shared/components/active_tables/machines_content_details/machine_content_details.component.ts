@@ -5,6 +5,8 @@ import { SelectComponent, Option } from "../../form/select/select.component";
 import { InputFieldComponent } from "../../form/input/input-field.component";
 import { TableDropdownComponent } from "../../common/table-dropdown/table-dropdown.component";
 import { ModalComponent } from "../../ui/modal/modal.component";
+import { ReportService, ReportColumn } from "../../../services/report.service";
+import { ReportViewerComponent } from "../../reports/report.component"; 
 
 interface MachineContent {
   id: string;
@@ -31,6 +33,7 @@ interface Machine {
 
 @Component({
   selector: "app-machine-detail-content",
+  standalone: true,
   imports: [
     CommonModule,
     ButtonComponent,
@@ -38,6 +41,7 @@ interface Machine {
     InputFieldComponent,
     TableDropdownComponent,
     ModalComponent,
+    ReportViewerComponent, // Add report component
   ],
   templateUrl: "./machine_content_details.component.html",
   styles: ``,
@@ -149,6 +153,9 @@ export class MachineContentDetailsComponent implements OnInit {
   isEditModalOpen = false;
   editingContent: MachineContent | null = null;
 
+  // Report Modal Properties
+  isReportModalOpen = false;
+
   // Form model for editing
   editForm = {
     beverage: "",
@@ -174,6 +181,8 @@ export class MachineContentDetailsComponent implements OnInit {
     { value: "Mocha", label: "Mocha" },
     { value: "Macchiato", label: "Macchiato" },
   ];
+
+  constructor(private reportService: ReportService) {}
 
   ngOnInit() {
     // Initialize machine options
@@ -223,6 +232,55 @@ export class MachineContentDetailsComponent implements OnInit {
     } else {
       this.currentMachineContent = [];
     }
+  }
+
+  // Generate Report for Machine Content
+  generateReport() {
+    if (!this.selectedMachineId || this.currentMachineContent.length === 0) {
+      console.warn('No machine selected or no content available for report');
+      return;
+    }
+
+    const currentMachine = this.getCurrentMachineInfo();
+    const summary = {
+      totalSlots: this.currentMachineContent.length,
+      totalAvailableCups: this.currentMachineContent.reduce((sum, item) => sum + item.availableCups, 0),
+      averagePrice: parseFloat((this.currentMachineContent.reduce((sum, item) => sum + item.price, 0) / this.currentMachineContent.length).toFixed(2)),
+      totalWaterRequired: this.currentMachineContent.reduce((sum, item) => sum + (item.waterPerCup * item.availableCups), 0),
+      totalPowderRequired: this.currentMachineContent.reduce((sum, item) => sum + (item.powderPerCup * item.availableCups), 0),
+      beverageTypes: [...new Set(this.currentMachineContent.map(item => item.beverage))].length
+    };
+
+    const reportColumns: ReportColumn[] = [
+      { key: 'id', label: 'ID', type: 'text' },
+      { key: 'slotNumber', label: 'Slot', type: 'number' },
+      { key: 'beverage', label: 'Beverage', type: 'text' },
+      { key: 'availableCups', label: 'Available Cups', type: 'number' },
+      { key: 'waterPerCup', label: 'Water/Cup (ml)', type: 'number', format: (value) => `${value}ml` },
+      { key: 'powderPerCup', label: 'Powder/Cup (g)', type: 'number', format: (value) => `${value}g` },
+      { key: 'mixingTime', label: 'Mixing Time (s)', type: 'number', format: (value) => `${value}s` },
+      { key: 'price', label: 'Price ($)', type: 'number', format: (value) => `$${value.toFixed(2)}` }
+    ];
+
+    this.reportService.generateReport({
+      title: `Machine Content Report - ${this.selectedMachineId}`,
+      filters: {
+        machineId: this.selectedMachineId,
+        machineCompany: currentMachine?.registeredCompany || 'Unknown',
+        machineLocation: currentMachine?.address || 'Unknown',
+        totalSlots: currentMachine?.slots || 0
+      },
+      items: [...this.currentMachineContent],
+      columns: reportColumns,
+      summary: summary
+    });
+
+    this.isReportModalOpen = true;
+  }
+
+  closeReportModal() {
+    this.isReportModalOpen = false;
+    this.reportService.clearReport();
   }
 
   // Individual change handlers that accept string | number

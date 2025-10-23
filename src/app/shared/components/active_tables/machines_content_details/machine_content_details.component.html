@@ -14,7 +14,7 @@
           (valueChange)="onMachineSelect($event)"
         ></app-select>
       </div>
-      <div class="flex items-end">
+      <div class="flex items-end gap-2">
         <app-button
           variant="primary"
           className="w-full"
@@ -22,6 +22,14 @@
           (btnClick)="searchMachineContent()"
         >
           Search
+        </app-button>
+        <app-button
+          variant="outline"
+          className="w-full"
+          [disabled]="!selectedMachineId || currentMachineContent.length === 0"
+          (btnClick)="generateReport()"
+        >
+          Report
         </app-button>
       </div>
     </div>
@@ -57,9 +65,18 @@
   <div class="rounded-2xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
     <div class="flex items-center justify-between p-6">
       <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Machine Content</h3>
-      <p class="text-sm text-gray-500 dark:text-gray-400">
-        Showing {{ currentMachineContent.length }} slot(s)
-      </p>
+      <div class="flex items-center gap-2">
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          Showing {{ currentMachineContent.length }} slot(s)
+        </p>
+        <app-button
+          size="sm"
+          variant="outline"
+          (btnClick)="generateReport()"
+        >
+          Generate Report
+        </app-button>
+      </div>
     </div>
 
     <div class="overflow-hidden">
@@ -261,3 +278,9 @@
     </div>
   </div>
 </app-modal>
+
+<!-- Report Modal -->
+<app-report-viewer
+  [isOpen]="isReportModalOpen"
+  (close)="closeReportModal()"
+></app-report-viewer>

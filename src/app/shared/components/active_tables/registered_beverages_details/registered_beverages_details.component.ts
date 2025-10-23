@@ -7,6 +7,12 @@ import { BadgeComponent } from "../../ui/badge/badge.component";
 import { ModalComponent } from "../../ui/modal/modal.component";
 import { InputFieldComponent } from "../../form/input/input-field.component";
 import { SelectComponent, Option } from "../../form/select/select.component";
+import {
+  ReportService,
+  ReportColumn,
+  ReportConfig,
+} from "../../../services/report.service";
+import { ReportViewerComponent } from "../../reports/report.component";
 
 interface Beverage {
   id: string;
@@ -32,11 +38,15 @@ interface Beverage {
     ModalComponent,
     InputFieldComponent,
     SelectComponent,
+    ReportViewerComponent,
   ],
   templateUrl: "./registered_beverages_details.component.html",
   styles: ``,
 })
 export class BeveragesTableComponent {
+  // Report properties
+  isReportOpen = false;
+
   // Filter form values
   filterForm = {
     beverageName: "",
@@ -187,6 +197,8 @@ export class BeveragesTableComponent {
   selectedFile: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;
   isUploading = false;
+
+  constructor(private reportService: ReportService) {}
 
   // Update methods for form inputs
   updateBeverageName(value: string | number) {
@@ -383,7 +395,9 @@ export class BeveragesTableComponent {
           beverageName: this.editForm.beverageName.trim(),
           shortCode: this.editForm.shortCode.trim(),
           description: this.editForm.description.trim(),
-          image: this.editForm.image || this.originalBeverageData[originalIndex].image,
+          image:
+            this.editForm.image ||
+            this.originalBeverageData[originalIndex].image,
           unitPrice: this.editForm.unitPrice,
           costPrice: this.editForm.costPrice,
         };
@@ -418,6 +432,70 @@ export class BeveragesTableComponent {
       unitPrice: 0,
       costPrice: 0,
     };
+  }
+
+  // Report functionality
+  generateReport(): void {
+    const reportColumns: ReportColumn[] = [
+      { key: "id", label: "ID", type: "text" },
+      { key: "beverageName", label: "Beverage Name", type: "text" },
+      { key: "shortCode", label: "Short Code", type: "text" },
+      { key: "description", label: "Description", type: "text" },
+      {
+        key: "activeStatus",
+        label: "Status",
+        type: "status",
+        format: (value: string) => value,
+      },
+      { key: "addedDate", label: "Added Date", type: "text" },
+      {
+        key: "unitPrice",
+        label: "Unit Price",
+        type: "number",
+        format: (value: number) => this.formatCurrency(value),
+      },
+      {
+        key: "costPrice",
+        label: "Cost Price",
+        type: "number",
+        format: (value: number) => this.formatCurrency(value),
+      },
+    ];
+
+    // Calculate summary statistics (excluding financial metrics)
+    const activeCount = this.beverageData.filter(
+      (b) => b.activeStatus === "Active"
+    ).length;
+    const inactiveCount = this.beverageData.filter(
+      (b) => b.activeStatus === "Inactive"
+    ).length;
+
+    const reportConfig: ReportConfig = {
+      title: "Beverages Inventory Report",
+      filters: {
+        beverageName: this.filterForm.beverageName || "All",
+        shortCode: this.filterForm.shortCode || "All",
+        activeStatus:
+          this.filterForm.activeStatus === "All"
+            ? "All Statuses"
+            : this.filterForm.activeStatus,
+      },
+      items: this.beverageData,
+      columns: reportColumns,
+      summary: {
+        totalBeverages: this.beverageData.length,
+        activeBeverages: activeCount,
+        inactiveBeverages: inactiveCount,
+      },
+    };
+
+    this.reportService.generateReport(reportConfig);
+    this.isReportOpen = true;
+  }
+
+  closeReport(): void {
+    this.isReportOpen = false;
+    this.reportService.clearReport();
   }
 
   getStatusBadgeColor(status: string): "success" | "error" {
